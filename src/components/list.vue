@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import VItem from 'components/Item'
+import VItem from 'components/Item/listItem'
 export default {
   data () {
     return {

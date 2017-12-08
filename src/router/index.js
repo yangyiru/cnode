@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/pages/home'
+import Detail from '@/pages/detail'
 import Message from '@/pages/message'
 import Login from '@/pages/login'
 import Me from '@/pages/me'
@@ -15,6 +16,14 @@ export default new Router({
       path: '/home',
       name: 'home',
       component: Home,
+      meta: {
+        requireAuth: false
+      }
+    },
+    {
+      path: '/detail/:id',
+      name: 'detail',
+      component: Detail,
       meta: {
         requireAuth: false
       }

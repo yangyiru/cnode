@@ -4,6 +4,7 @@
      	<v-header :handleMenuButton="showOrHideMask" :show="show" :title="title"></v-header>
      	<v-sidebar :showSidebar="show" :toggleSideBar="showOrHideMask"></v-sidebar>
      	<v-list :updateHeaderTitle="updateHeaderTitle" :array="listArray"></v-list>
+      <v-loading v-show="showload"></v-loading>
      	<v-footer></v-footer>
      </div>
 </template>
@@ -16,6 +17,7 @@
     import VList from 'components/list'
     import VFooter from 'components/footer'
     import Utils from 'assets/js/utils.js'
+    import VLoading from 'components/loading'
     export default {
       name: 'home',
       data () {
@@ -23,7 +25,8 @@
           show: false,
           title: '全部',
           listArray: [],
-          currentPage: 1
+          currentPage: 1,
+          showload: true
         }
       },
       mounted () {
@@ -31,15 +34,16 @@
         if (array) {
           array = JSON.parse(array)
           this.listArray = array
-          this.showLoading = false
+          this.showload = false
           this.$nextTick(() => $(window).scrollTop(window.window.sessionStorage.scrollTop))
         } else {
           Axios.get('https://cnodejs.org/api/v1/topics')
-                .then(arr => {
-                  this.listArray = arr.data.data
-                  this.showLoading = !this.showLoading
-                })
-                .catch(error => this.$alerTips('出错了！'))
+            .then(arr => {
+              this.listArray = arr.data.data
+              console.log(arr.data.data)
+              this.showload = !this.showload
+            })
+            .catch(error => alert('出错了！'))
         }
         $(window).on('scroll', Utils.throttle(Utils.showOrHideScroll.bind(this), 500))
         $(window).on('scroll', Utils.throttle(this.loadMore, 2000))
@@ -87,7 +91,8 @@
         VHeader,
         VSidebar,
         VList,
-        VFooter
+        VFooter,
+        VLoading
       }
     }
 </script>

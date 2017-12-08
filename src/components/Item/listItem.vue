@@ -1,5 +1,5 @@
 <template>
-   <div class="item">
+   <router-link :to="{name: 'detail',params: {id: item.id}}" tag="div" class="item">
    		<div class="item_top">
    			<div class="t_left">
    				<div class="avatar" style="background-image:url(https://avatars1.githubusercontent.com/u/227713?v=3&s=120)"></div>
@@ -9,8 +9,8 @@
 	            </div>
    			</div>
    			<div class="t_right">
-   				<span class="essence">精华</span>
-   				<span class="tophot">置顶</span>
+   				<span class="essence" :class="{'good': item.good}">精华</span>
+   				<span class="tophot" :class="{'top': item.top}">置顶</span>
    			</div>
    		</div>
    		<div class="text">
@@ -31,7 +31,7 @@
    				<span>{{item.last_reply_at.substring(5,10)}}</span>
    			</div>
    		</div>
-   </div> 
+   </router-link> 
 </template>
 
 <script>
@@ -96,11 +96,16 @@ export default {
 	                padding:10px;
 	                color:#fff;
 	                &.essence{
-	                	visibility: visible;
+	                	
 			            background-image: linear-gradient(to top, #00c6fb 0%, #005bea 100%);
+			            &.good{
+			            	visibility: visible;
+			            }
 	                }
 					&.tophot{
-						visibility: visible;
+						&.hot{
+							visibility: visible;
+						}
 				        background-image: linear-gradient(to top, #0fd850 0%, #f9f047 100%);
 					}
 		    	}
