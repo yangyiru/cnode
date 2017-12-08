@@ -29,6 +29,7 @@ module.exports = {
     }],
     "no-useless-return": 0,
     "handle-callback-err": 0,
+    "no-return-assign": 0,
     'no-unused-expressions': [0, { 'allowShortCircuit': false, 'allowTernary': true }]
   }
 }

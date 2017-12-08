@@ -12,12 +12,16 @@ export default new Router({
   base: 'cnode',
   routes: [
     {
-      path: '/',
+      path: '/home',
       name: 'home',
       component: Home,
       meta: {
         requireAuth: false
       }
+    },
+    {
+      path: '*',
+      redirect: '/home'
     },
     {
       path: '/login',
@@ -37,7 +41,7 @@ export default new Router({
       path: '/me',
       component: Me,
       meta: {
-        requireAuth: true
+        requireAuth: false
       }
     }
   ]

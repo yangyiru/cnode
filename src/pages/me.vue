@@ -9,7 +9,8 @@
         	<div class="me_head">
         		<div class="avatar" :style="`background-image:url(${user.avatar_url})`" v-if="user.avatar_url"></div>
         		<div class="avatar" v-else></div>
-        		<div class="text">{{user.loginname||'暂未登录'}}</div>
+        		<div class="text" v-if="user.loginname">{{user.loginname}}</div>
+        		<div class="text" v-else @click="gologin">暂未登录</div>
         	</div>
         	<div class="me_item first">
         		<div class="item_box">
@@ -69,6 +70,11 @@ export default {
     getUserFromSession () {
       let user = window.window.sessionStorage.user
       return user && JSON.parse(user)
+    },
+    gologin () {
+      this.$router.push({
+        path: '/login'
+      })
     }
   },
   components: {

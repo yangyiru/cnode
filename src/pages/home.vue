@@ -3,36 +3,46 @@
      	<div v-show='show' class="pagecover" @click='hide'></div>
      	<v-header :handleMenuButton="showOrHideMask" :show="show" :title="title"></v-header>
      	<v-sidebar :showSidebar="show" :toggleSideBar="showOrHideMask"></v-sidebar>
-     	<v-list :array="listArray"></v-list>
+     	<v-list :updateHeaderTitle="updateHeaderTitle" :array="listArray"></v-list>
      	<v-footer></v-footer>
      </div>
 </template>
 
 <script>
+    import Axios from 'axios'
+    import $ from 'jquery'
     import VHeader from 'components/header'
     import VSidebar from 'components/sidebar'
     import VList from 'components/list'
     import VFooter from 'components/footer'
+    import Utils from 'assets/js/utils.js'
     export default {
       name: 'home',
       data () {
         return {
           show: false,
           title: '全部',
-          listArray: [
-            {
-              author: {
-                avatar_url: 'https://avatars1.githubusercontent.com/u/227713?v=3&s=120',
-                loginname: 'atian25'
-              },
-              create_at: '2017-12-03',
-              visit_count: 835,
-              reply_count: 23,
-              last_reply_at: '2017-12-05T01:55:20.399Z',
-              title: 'Egg 2.0 正式发布，性能提升 30%，拥抱 Async'
-            }
-          ]
+          listArray: [],
+          currentPage: 1
         }
+      },
+      mounted () {
+        let array = window.window.sessionStorage.array
+        if (array) {
+          array = JSON.parse(array)
+          this.listArray = array
+          this.showLoading = false
+          this.$nextTick(() => $(window).scrollTop(window.window.sessionStorage.scrollTop))
+        } else {
+          Axios.get('https://cnodejs.org/api/v1/topics')
+                .then(arr => {
+                  this.listArray = arr.data.data
+                  this.showLoading = !this.showLoading
+                })
+                .catch(error => this.$alerTips('出错了！'))
+        }
+        $(window).on('scroll', Utils.throttle(Utils.showOrHideScroll.bind(this), 500))
+        $(window).on('scroll', Utils.throttle(this.loadMore, 2000))
       },
       methods: {
         showOrHideMask (show) {
@@ -40,6 +50,37 @@
         },
         hide () {
           this.show = !this.show
+        },
+        updateHeaderTitle (title) {
+          this.title = title
+        },
+        loadMore () {
+          let scrollTop = $(window).scrollTop()
+          let windowHeight = $(window).height()
+          let documentHeight = $(document).height()
+          if (scrollTop + windowHeight > documentHeight - 2000) {
+            let page = ++this.currentPage
+            let tab = this.$route.query.type || 'all'
+            console.log(page, tab)
+            Axios.get('https://cnodejs.org/api/v1/topics?' + 'page=' + page + '&tab=' + tab)
+                 .then((arr) => this.listArray = this.listArray.concat(arr.data.data))
+          }
+        }
+      },
+      watch: {
+      // 切换页面
+        '$route': function (to, from) {
+          console.log('list页面路由监听')
+          if (to.query && to.query.type) {
+            console.log('success')
+            let tab = to.query.type
+            this.title = Utils.mapStringToHanzi(tab)
+            Axios.get('https://cnodejs.org/api/v1/topics?tab=' + tab + '&page=1')
+              .then(arr => {
+                this.listArray = arr.data.data
+              })
+              .catch(err => this.$alerTips(err))
+          }
         }
       },
       components: {

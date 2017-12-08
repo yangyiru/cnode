@@ -1,50 +1,64 @@
 <template>
    <div :class="['vsidebar',{show: showSidebar}]">
    		<div class="login">
-   			<div style="display:none">
-   				<img src="https://pic4.zhimg.com/v2-e7e77760a95399aeb6804527942e694f_is.jpg" alt="">
-   				<span>我的名字</span>
-   			</div>
-   			<div>
-   				<img src="../assets/images/unlogin.jpg" alt="">
+   			<router-link to="me" tag="div" v-if="user.loginname">
+   				<img :src="user&&user.avatar_url" alt="">
+   				<span>{{user&&user.loginname}}</span>
+   			</router-link>
+   			<router-link to="login" tag="div" v-else>
+   				<img src="../assets/images/unlogin.jpg" alt="" >
    				<span>点此登录</span>
-   			</div>
+   			</router-link>
    		</div>
 		<div class="topics">
-			<ul>
-				<li>
+			<ul @click="hide">
+				<router-link :to="{ path: 'home', query: { type: 'all' }}" tag='li'>
 					<i class="icon_all"></i>
 					全部
-				</li>
-				<li>
+				</router-link>
+				<router-link :to="{ path: 'home', query: { type: 'good' }}" tag='li'>
 					<i class="icon_essence"></i>
 					精华
-				</li>
-				<li>
+				</router-link>
+				<router-link :to="{ path: 'home', query: { type: 'share' }}" tag='li'>
 					<i class="icon_share"></i>
 					分享
-				</li>
-				<li>
+				</router-link>
+				<router-link :to="{ path: 'home', query: { type: 'ask' }}" tag='li'>
 					<i class="icon_qa"></i>
 					问答
-				</li>
-				<li>
+				</router-link>
+				<router-link :to="{ path: 'home', query: { type: 'job' }}" tag='li'>
 					<i class="icon_recruitment"></i>
 					招聘
-				</li>
+				</router-link>
 			</ul>
 		</div>
    </div> 
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
 export default {
-  // data () { return },
+  data () {
+    return {
+      user: {...this.userInfo, ...this.getUserFromSession()}
+    }
+  },
   props: {
     showSidebar: Boolean,
     toggleSideBar: Function
   },
+  computed: {
+    ...mapGetters({
+      userInfo: 'getUserInfo'
+    })
+  },
   methods: {
+    getUserFromSession () {
+      let user = window.window.sessionStorage.user
+      return user && JSON.parse(user)
+    },
     hide () {
       this.toggleSideBar(!this.showSidebar)
     }

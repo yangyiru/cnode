@@ -7,10 +7,10 @@ import router from './router'
 import store from './store'
 import fastclick from 'fastclick' // 解决移动端click时间延时300ms问题
 import 'assets/css/index.less'
-
+import backToTop from 'assets/js/backToTop'
 fastclick.attach(document.body)
 Vue.config.productionTip = false
-
+Vue.use(backToTop)
 // 路由守卫
 router.beforeEach((to, from, next) => {
   console.log('全局路由控制')
